@@ -26,7 +26,7 @@ app.get('/quote', async (req, res) => {
     const randomQuote = await getRandomQuote();
     res.send(`<h2>${randomQuote}</h2>`);
   } catch (error) {
-    res.status(500).send(`<p>${error.message}</p>`);
+    res.status(500).send(`<p>You entered wrong path. It only available in / and /quote</p>`);
   }
 });
 
