@@ -12,7 +12,12 @@ async function getRandomQuote() {
     const author = response.data.author;
     return `"${quote}" - ${author}`;
   } catch (error) {
-    throw new Error('Error fetching random quote:', error.message);
+    // Check if the error is due to a wrong path (e.g., network error)
+    if (error.code === 'ENOTFOUND') {
+      throw new Error('Error fetching random quote: Wrong path or network issue');
+    } else {
+      throw new Error('Error fetching random quote:', error.message);
+    }
   }
 }
 
@@ -26,8 +31,13 @@ app.get('/quote', async (req, res) => {
     const randomQuote = await getRandomQuote();
     res.send(`<h2>${randomQuote}</h2>`);
   } catch (error) {
-    res.status(500).send(`<p>You entered wrong path. It only available in / and /quote</p>`);
+    res.status(500).send(`<h2>${error.message}</h2>`);
   }
+});
+
+// Catch-all route for any other paths
+app.all('*', (req, res) => {
+  res.status(404).send('<h2>You entered the wrong path</h2>');
 });
 
 // Start the server
